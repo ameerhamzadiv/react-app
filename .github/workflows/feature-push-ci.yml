@@ -1,41 +1,34 @@
-name: Feature Branch CI + Auto Merge to Dev
+name: Feature Branch CI on Push
 
 on:
+  pull_request:
+    branches: [ "dev" ]
   push:
     branches:
       - 'feature/*'
 
 jobs:
-  ci-and-merge:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout feature branch
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Lint
+      - name: Lint
         run: npm run lint
 
       - name: Run Tests
         run: npm run test -- --coverage --watchAll=false
 
-      - name: Build
+      - name: Build (check)
         run: npm run build
-
-      - name: Auto merge feature → dev
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          merge-method: squash
-          source: ${{ github.ref_name }}
-          target: dev
-          commit-title: "chore: auto-merge ${{ github.ref_name }} → dev"
-          fail-on-conflict: true
