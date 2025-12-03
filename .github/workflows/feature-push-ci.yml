@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Auto merge feature → dev
-        uses: peter-evans/merge-pull-request@v7
+        uses: peter-evans/merge-pull-request@v4
         with:
           token: ${{ secrets.GIT_TOKEN }}
           merge-method: squash
