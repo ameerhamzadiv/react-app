@@ -10,40 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout feature branch
-      - name: Checkout code
+      - name: Checkout feature branch
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: npm
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4️⃣ Lint
-      - name: Lint
+      - name: Run Lint
         run: npm run lint
 
-      # 5️⃣ Run Tests
       - name: Run Tests
         run: npm run test -- --coverage --watchAll=false
 
-      # 6️⃣ Build
-      - name: Build (check)
+      - name: Build
         run: npm run build
 
-      # 7️⃣ Auto merge into dev
-      - name: Merge feature branch into dev
-        uses: devops-infra/action-pull-request@v1.0.2
+      - name: Auto merge feature → dev
+        uses: peter-evans/merge-pull-request@v7
         with:
-          github_token: ${{ secrets.GIT_TOKEN }}
-          source_branch: ${{ github.ref_name }}
-          target_branch: dev
-          title: "chore: auto-merge ${{ github.ref_name }} → dev"
-          body: "Auto-merged feature branch after CI passed"
-          delete_branch: false
+          token: ${{ secrets.GIT_TOKEN }}
+          merge-method: squash
+          source: ${{ github.ref_name }}
+          target: dev
+          commit-title: "chore: auto-merge ${{ github.ref_name }} → dev"
+          fail-on-conflict: true
