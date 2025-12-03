@@ -39,7 +39,7 @@ jobs:
 
       # 7️⃣ Auto merge into dev
       - name: Merge feature branch into dev
-        uses: devops-infra/action-pull-request@v0.3.1
+        uses: devops-infra/action-pull-request@v1.0.2
         with:
           github_token: ${{ secrets.GIT_TOKEN }}
           source_branch: ${{ github.ref_name }}
